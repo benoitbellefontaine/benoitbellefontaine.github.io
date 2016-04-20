@@ -60,6 +60,9 @@ app
 				}
 			},
 			data: { requireLogin: false },
+			controller: function($scope, $rootScope) {
+				$rootScope.isHome = false;
+			}
 		})
 		
 		.state('portfolio', {
@@ -73,6 +76,9 @@ app
 				}
 			},
 			data: { requireLogin: false },
+			controller: function($scope, $rootScope) {
+				$rootScope.isHome = false;
+			}
 		})
 
 		.state('partners', {
@@ -86,6 +92,9 @@ app
 				}
 			},
 			data: { requireLogin: false },
+			controller: function($scope, $rootScope) {
+				$rootScope.isHome = false;
+			}
 		})
 		
 		.state('contact', {
@@ -99,6 +108,9 @@ app
 				}
 			},
 			data: { requireLogin: false },
+			controller: function($scope, $rootScope) {
+				$rootScope.isHome = false;
+			}
 		})
   })
   .controller('mainController', function($scope, $rootScope) {
