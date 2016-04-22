@@ -1,3 +1,114 @@
-<header>
-	<h1>Partenaires <span>en construction</span></h1>	
-</header>
+
+	<div>
+
+			<header class="clearfix">
+				<h1>Nos Partenaires</h1><span>Consultants PME Outaouais</span>
+			</header>
+			
+			<div class="main clearfix demo-1">
+			
+				<!-- the header that will be animated by adding the respective state class to it -->
+				<header id="ha-header" class="ha-header ha-header-large">
+					<div class="ha-header-perspective">
+						<div class="ha-header-front">
+							<nav>
+								<a id="c1">C.R. Communication</a>
+								<a id="c2">SARRAZIN & TRÉPANIER</a>
+								<a id="c3">ROBINSON</a>
+								<a id="c4">MYCONCEPT360</a>
+							</nav>
+						</div>
+						<div class="ha-header-c1 company">
+							<header>
+								<span><img src="img/C-R-Communication.png" width="100%" /></span>
+								<span>La référence en communication en Outaouais</span>
+								<div><a href="http://crcommunications.ca">CR Communication</a></div>
+							</header>
+						</div>
+						<div class="ha-header-c2 company">
+							<header>
+								<span><img src="img/Trépanier-Sarrazin.jpg"></span>
+								<span><a href="http://www.tscga.ca/">Trépanier Sarrazin</a></span>
+								<p>Expertise comptable</p>
+							</header>
+						</div>
+						<div class="ha-header-c3 company">
+							<header>
+								<span><img src="img/Robinson-e1459782236636.png" ></span>
+								<span><a href="http://brlex.com">Robinson Droit des Affaires</a></span>
+								<p>Cabinet juridique</p>
+							</header>
+						</div>
+						<div class="ha-header-c4 company">
+							<header>
+								<span><img src="img/concept360_francais2-e1459782211585.png"></span>
+								<span><a href="http://myconcept360.com">Concept</a></span>
+								<p>Conception Web & Stratégies Numériques</p>
+							</header>
+						</div>
+					</div>
+				</header>
+
+			</div>
+		
+	</div>
+		
+		<script src="js/jquery.min.js"></script>
+
+		<script>
+			
+			$('#c1').click(function(){
+				var head = $( '#ha-header' );
+				head.attr('class', 'ha-header ha-header-shrink ha-header-c1');
+				console.log('clicking #c1 and header content is ' + head.attr('class'));
+				setTimeout( function() {}, 500);
+				head.attr('class', 'ha-header ha-header-rotate1 ha-header-c1');
+				console.log('clicking #c1 and header content is ' + head.attr('class'));
+			});
+			
+			$('.ha-header-c1').click(function(){
+				var head = $( '#ha-header' );
+				head.attr('class', 'ha-header ha-header-rotateBack1');
+				console.log('clicking .ha-header-c1 and header content is ' + head.attr('class'));
+			});
+			
+			
+			$('#c2').click(function(){
+				var head = $( '#ha-header' );
+				head.attr('class', 'ha-header ha-header-rotate2 ha-header-c2');
+				console.log('clicking #c2 and header content is ' + head.attr('class'));
+			});
+			
+			$('.ha-header-c2').click(function(){
+				var head = $( '#ha-header' );
+				head.attr('class', 'ha-header ha-header-rotateBack2');
+				console.log('clicking .ha-header-c2 and header content is ' + head.attr('class'));
+			});
+			
+			
+			$('#c3').click(function(){
+				var head = $( '#ha-header' );
+				head.attr('class', 'ha-header ha-header-rotate3 ha-header-c3');
+				console.log('clicking #c3 and header content is ' + head.attr('class'));
+			}); 
+			
+			$('.ha-header-c3').click(function(){
+				var head = $( '#ha-header' );
+				head.attr('class', 'ha-header ha-header-rotateBack3');
+				console.log('clicking .ha-header-c3 and header content is ' + head.attr('class'));
+			});
+			
+			
+			$('#c4').click(function(){
+				var head = $( '#ha-header' );
+				head.attr('class', 'ha-header ha-header-rotate4 ha-header-c4');
+				console.log('clicking #c4 and header content is ' + head.attr('class'));
+			});
+			
+			$('.ha-header-c4').click(function(){
+				var head = $( '#ha-header' );
+				head.attr('class', 'ha-header ha-header-rotateBack4');
+				console.log('clicking .ha-header-c4 and header content is ' + head.attr('class'));
+			});
+			
+		</script>
