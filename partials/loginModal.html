@@ -1,0 +1,15 @@
+view: loginModal.html
+<div class="modal-header">
+	<h3 class="modal-title" id="modal-title">Login Form</h3>
+</div>
+<div class="modal-body" id="modal-body">
+	<form ng-submit="$ctrl.submit(email, password)">
+		<input type="text" ng-model="email" />
+		<input type="password" ng-model="password" />
+		<button class="btn btn-primary" type="submit" >Login</button>
+		<button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>
+	</form>
+</div>
+<!-- <div class="modal-footer">
+	<button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>
+</div> -->
