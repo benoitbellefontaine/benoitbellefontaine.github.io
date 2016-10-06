@@ -54,39 +54,12 @@
 		}
 
 		function init() {
-			gapi.client.setApiKey('YOUR API KEY');
+			gapi.client.setApiKey('AIzaSyCS6E__FsG206GJUh6wWgP6oz0QVCWBpCU');
 			gapi.client.load('urlshortener', 'v1').then(makeRequest);
 		}
 
 		gapi.load('client', init);
 	</script>
-	
-	<!-- GOOGLE API AUTHORIZED ACCESS -->
-    <script>
-      var apiKey = 'YOUR_API_KEY';
-      var clientId = 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com';
-      var scopes = 'profile';
-
-      // Get authorization from the user to access profile info
-      function initAuth() {
-        gapi.client.setApiKey(apiKey);
-        gapi.auth2.init({
-            client_id: clientId,
-            scope: scopes
-        });
-        var signinButton = document.getElementById('signin-button');
-        signinButton.addEventListener("click", auth);
-      }
-
-      function auth() {
-        gapi.auth2.getAuthInstance().signIn().then(function() {
-          makeApiCall();
-        });
-      }
-
-      gapi.load('client:auth2', initAuth);
-    </script>
-
 
 </head>
   
@@ -107,15 +80,18 @@
 				</form>
 			</div>
 			<div ng-if="!currentUser">
-				<!-- <button class="btn btn-primary" type="submit" ui-sref="dashboard" ui-sref-active="active">Login</button> -->
-				<button class="btn btn-primary" type="submit" ng-click="login()">Login</button>
+				<!-- <button class="btn btn-primary" type="submit" ui-sref="login" ui-sref-active="active">Login</button> -->
+				<button class="btn btn-primary" type="submit" ui-sref="login" ui-sref-active="active">Login (page)</button>
+				<button class="btn btn-primary" type="submit" ng-click="login()">Login (modal)</button>
 				<button class="btn btn-warning" type="submit" ng-click="register()">Sign Up</button>
 			</div>
 		</span>
 	</div>
+	
+	<div ng-show="false" id="results"></div>
 
 	<div ui-view="viewHome"></div>
-	<!-- <div ui-view="viewLogin"></div> -->
+	<div ui-view="viewLogin"></div>
 	<!-- <div ui-view="viewRegister"></div> -->
 	<div ui-view="viewDash"></div>
 	<div ui-view="viewGame"></div>

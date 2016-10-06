@@ -98,7 +98,6 @@ app
 			},
 			data: { requireLogin: true }
 		})
-		/*
 		.state('login', {
 			url: '/login',
 			onEnter: ['$state', function($state) { console.log('entering login'); }],
@@ -126,6 +125,7 @@ app
 			},
 			data: { requireLogin: false }
 		})	
+		/*
 		.state('register', {
 			url: '/register',
 			onEnter: ['$state', function($state) { console.log('entering register'); }],
@@ -402,10 +402,11 @@ app
 		$rootScope.currentUser = user;
 		return user;
 	}
+	$uibModal.size = 'lg';
 	return function() {
 		var instance = $uibModal.open({
 			templateUrl: 'partials/loginModal.html',
-			controller: 'LoginModalCtrl',
+			controller: 'LoginModalController',
 			controllerAs: '$ctrl'
 		})
 		return instance.result.then(assignCurrentUser);
@@ -413,12 +414,49 @@ app
   })
   
   // login controller
-  .controller('LoginModalCtrl', function ($scope) {
-	var $ctrl = this;
-	$scope.page = "LOGIN FORM";
+  .controller('LoginModalController', function ($scope) {
+
+	console.log('Loading GOOGLE API AUTHORIZED ACCESS from LoginModalController');
+	
+	var apiKey = 'AIzaSyCS6E__FsG206GJUh6wWgP6oz0QVCWBpCU';
+	var clientId = '898129103079-df2a6vsnvtfvsv3l41vdjkipvvd60aoo.apps.googleusercontent.com';
+	var scopes = 'profile';
+	
+	$scope.apiKey = apiKey;
+	$scope.clientId = clientId;
+	
+	$scope.page = "login form";
 	$scope.loginData = {};
 	$scope.email = "ben@gmail.com";
 	$scope.password = "ny8gpa40";
+	
+	function initAuth() {
+		console.log('initAuth');
+        gapi.client.setApiKey(apiKey);
+        gapi.auth2.init({
+            client_id: clientId,
+            scope: scopes
+        });
+        //var signinButton = document.getElementById('google-button');
+        //signinButton.addEventListener("click", auth);
+	}
+	
+	function auth() {
+		gapi.auth2.getAuthInstance().signIn().then(function() {
+			makeApiCall();
+		});
+	}
+	
+	this.google = function () {
+		console.log('google_authentication');
+		gapi.load('client:auth2', initAuth);
+		console.log('gapi.loaded');
+		
+		//auth();
+		gapi.auth2.getAuthInstance().signIn().then(function() {
+			makeApiCall();
+		});
+	}
 	
 	this.cancel = $scope.$dismiss;
 	
