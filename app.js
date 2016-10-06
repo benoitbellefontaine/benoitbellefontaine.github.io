@@ -2,7 +2,6 @@
 var app = angular.module("app", ['ngResource', 'ui.router', 'ngAnimate', 'ngSanitize', 'ui.bootstrap']);
 
 app
-
   .config(function ($httpProvider) {
 
 	$httpProvider.interceptors.push(function ($timeout, $q, $injector) {
@@ -52,9 +51,6 @@ app
 				"viewHome": {
 					templateUrl: 'partials/home.html',
 					controller: function($scope, $rootScope, $state) {
-						$scope.register = function() {
-							console.log('home:register');
-						}
 					},
 				}
 			},
@@ -231,20 +227,148 @@ app
         })*/
   })
 
-  .controller('MainController', function ($scope, $rootScope, $state, registerModal) {
+  // AUTHENTICATION
+  .constant('AUTH_EVENTS', {
+	loginSuccess: 'auth-login-success',
+	loginFailed: 'auth-login-failed',
+	logoutSuccess: 'auth-logout-success',
+	sessionTimeout: 'auth-session-timeout',
+	notAuthenticated: 'auth-not-authenticated',
+	notAuthorized: 'auth-not-authorized'
+  })
+
+  .factory('AuthService', function ($http) { //, Session) {
+	var authService = {};
+	authService.isAuthenticated = function () {
+		//return !!Session.userId;
+		return true; // assume authentication is always true !
+	};
+	return authService;
+  })
+  
+  .controller('ApplicationController', function ($scope, $rootScope, $state, registerModal, loginModal, AUTH_EVENTS) {
+	  
+	$scope.currentUser = null;
+	$scope.isAuthenticated = AUTH_EVENTS.notAuthenticated;
+	
+	$scope.logout = function() {
+		console.log('MainController.logout: ',$scope.currentUser);
+		$scope.currentUser = undefined;
+		$rootScope.currentUser = undefined;
+		$state.go('home');
+	}
+	
+	$scope.login = function() {
+		console.log('user before login: ',$scope.currentUser);
+		loginModal()
+			.then(function (user) {
+				$scope.currentUser = user;
+				return $state.go('dashboard');
+			})
+			.catch(function () {
+				return $state.go('home');
+		});
+		console.log('user after login: ',$scope.currentUser);
+	}
+	
 	$scope.register = function() {
-		console.log('home:register');
 		registerModal()
-			.then(function (name) {
-				console.log('name',name);
+			.then(function (user) {
+				$scope.currentUser = user;
 				return $state.go('dashboard');
 			})
 			.catch(function () {
 				return $state.go('home');
 		});
 	}
+	
+	$scope.setCurrentUser = function (user) {
+		$scope.currentUser = user;
+	};
+	
   })
   
+  .service('session', ['$log', 'localStorage', function ($log, localStorage) {
+
+	// Instantiate data when service
+	// is loaded
+	this._user = JSON.parse(localStorage.getItem('session.user'));
+	this._accessToken = JSON.parse(localStorage.getItem('session.accessToken'));
+
+	this.getUser = function(){
+	  return this._user;
+	};
+
+	this.setUser = function(user){
+	  this._user = user;
+	  localStorage.setItem('session.user', JSON.stringify(user));
+	  return this;
+	};
+
+	this.getAccessToken = function(){
+	  return this._accessToken;
+	};
+
+	this.setAccessToken = function(token){
+	  this._accessToken = token;
+	  localStorage.setItem('session.accessToken', token);
+	  return this;
+	};
+
+	/**
+	 * Destroy session
+	 */
+	this.destroy = function destroy(){
+	  this.setUser(null);
+	  this.setAccessToken(null);
+	};
+	  
+  }])
+  
+  .service('auth', ['$http', 'session', function AuthService($http, session) {
+
+    /**
+    * Check whether the user is logged in
+    * @returns boolean
+    */
+    this.isLoggedIn = function isLoggedIn(){
+      return session.getUser() !== null;
+    };
+
+    /**
+    * Log in
+    *
+    * @param credentials
+    * @returns {*|Promise}
+    */
+    this.login = function(credentials){
+      return $http
+        .post('/api/login', credentials)
+        .then(function(response){
+          var data = response.data;
+          session.setUser(data.user);
+          session.setAccessToken(data.accessToken);
+        });
+    };
+
+    /**
+    * Log out
+    *
+    * @returns {*|Promise}
+    */
+    this.logout = function(){
+      return $http
+        .get('/api/logout')
+        .then(function(response){
+
+          // Destroy session in the browser
+          session.destroy();      
+        });
+    };
+
+  }])
+  
+/*
   .controller('RegisterController', function ($scope, $rootScope) { //, AUTH_EVENTS, USER_ROLES, UserFactory) {
 	  $scope.roles = USER_ROLES; //['superuser','admin','teacher','parent'];
 	  $scope.credentials = {
@@ -263,6 +387,14 @@ app
 		});
 	  };
   })
+*/
+  
+  .factory('localStorage', ['$window', function localStorageServiceFactory($window){
+    if($window.localStorage){
+      return $window.localStorage;
+    }
+    throw new Error('Local storage support is needed');
+  }])
 
   // login service
   .service('loginModal', function ($uibModal, $rootScope) {
@@ -304,6 +436,7 @@ app
   .service('registerModal', function ($uibModal, $rootScope) {
 	function assignCurrentUser (user) {
 		$rootScope.currentUser = user;
+		$rootScope.loggedIn = 1;
 		return user;
 	}
 	return function() {
@@ -337,30 +470,30 @@ app
 	
   })
   
-  .run(function ($rootScope, $state, loginModal) { //$uibModal) {
+  .run(function ($rootScope, $state, loginModal, auth, session) { //$uibModal) {
 	  
-  	$rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+	$rootScope.$on('$stateChangeStart', function (event, next, toParams) {
 		
-		var requireLogin = toState.data.requireLogin;
-		
-		// user dont exist
-		if (toState.name === 'register') {
-			console.log('toState.name ===',toState.name);
-		//var requireRegister = toState.data.requireRegister;
-		}
+		$rootScope.auth = auth;
+		$rootScope.session = session;
 
+		var requireLogin = next.data.requireLogin;
+		
 		if (requireLogin && typeof $rootScope.currentUser === 'undefined') {
+		//if ( requireLogin && ( $scope.isAuthenticated === AUTH_EVENTS.notAuthenticated ) ) {
 			event.preventDefault();
 
 			loginModal()
 				.then(function () {
-					console.log('toState.name',toState.name);
-					return $state.go(toState.name, toParams);
+					console.log('toState.name',next.name);
+					return $state.go(next.name, toParams);
 				})
 				.catch(function () {
 					return $state.go('home');
 			});
+			
 		}
 		
 	});
+	
   });
