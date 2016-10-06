@@ -35,6 +35,8 @@
 	
 	<!-- GOOGLE API -->
 	<script src="https://apis.google.com/js/api.js"></script>
+	<script src="https://apis.google.com/js/client.js"></script>
+	<script type="text/javascript" src="https://apis.google.com/js/platform.js"></script>
 	<script>
 		function appendResults(text) {
 			var results = document.getElementById('results');
@@ -60,6 +62,33 @@
 
 		gapi.load('client', init);
 	</script>
+	
+	<!-- GOOGLE API AUTHORIZED ACCESS -->
+	<!-- <script>
+		var apiKey = 'AIzaSyCS6E__FsG206GJUh6wWgP6oz0QVCWBpCU';
+		var clientId = '898129103079-df2a6vsnvtfvsv3l41vdjkipvvd60aoo.apps.googleusercontent.com';
+		var scopes = 'profile';
+
+      // Get authorization from the user to access profile info
+      function initAuth() {
+		console.log('initAuth');
+        gapi.client.setApiKey(apiKey);
+        gapi.auth2.init({
+            client_id: clientId,
+            scope: scopes
+        });
+        var signinButton = document.getElementById('google-button');
+        signinButton.addEventListener("click", auth);
+      }
+
+      function auth() {
+        gapi.auth2.getAuthInstance().signIn().then(function() {
+          makeApiCall();
+        });
+      }
+
+      gapi.load('client:auth2', initAuth);
+    </script> -->
 
 </head>
   

@@ -106,10 +106,11 @@ app
 				"viewLogin": {
 					templateUrl: 'partials/login.html',
 					controller: function($scope, $rootScope, $state, $timeout, $q) { //, AuthService) {
-						$scope.page = "LOGIN FORM";
+						$scope.page = "state: login";
 						$scope.loginData = {};
-						$scope.loginData.username = "ben";
-						$scope.loginData.password = "ny8gpa40";
+						$scope.loginData.email = "test@example.com";
+						$scope.loginData.username = "test";
+						$scope.loginData.password = "eueueueu";
 						$scope.login = function(regData) {
 							console.log('calling authService');
 							var defer = $q.defer();
@@ -120,6 +121,38 @@ app
 							$rootScope.currentUser = $scope.loginData.username;
 							$state.go('dashboard');
 						};
+						
+						var apiKey = 'AIzaSyCS6E__FsG206GJUh6wWgP6oz0QVCWBpCU';
+						var clientId = '898129103079-df2a6vsnvtfvsv3l41vdjkipvvd60aoo.apps.googleusercontent.com';
+						var scopes = 'profile';
+						
+						$scope.apiKey = apiKey;
+						$scope.clientId = clientId;
+						
+						gapi.load('client:auth2', initAuth);
+						
+						function initAuth() {
+							console.log('initAuth');
+					        gapi.client.setApiKey(apiKey);
+					        gapi.auth2.init({
+					            client_id: clientId,
+					            scope: scopes
+					        });
+					        //var signinButton = document.getElementById('google-button');
+					        //signinButton.addEventListener("click", auth);
+						}
+						
+						function auth() {
+							gapi.auth2.getAuthInstance().signIn().then(function() {
+								makeApiCall();
+							});
+						}
+						this.google = function () {
+							var instance = gapi.auth2.getAuthInstance();
+							instance.signIn().then(function() {
+								makeApiCall();
+							});
+						}
 					},
 				},
 			},
@@ -415,6 +448,10 @@ app
   
   // login controller
   .controller('LoginModalController', function ($scope) {
+	  
+	$scope.page = "login form";
+	$scope.email = "test@example.com";
+	$scope.password = "ueueueu";
 
 	console.log('Loading GOOGLE API AUTHORIZED ACCESS from LoginModalController');
 	
@@ -425,10 +462,7 @@ app
 	$scope.apiKey = apiKey;
 	$scope.clientId = clientId;
 	
-	$scope.page = "login form";
-	$scope.loginData = {};
-	$scope.email = "ben@gmail.com";
-	$scope.password = "ny8gpa40";
+	gapi.load('client:auth2', initAuth);
 	
 	function initAuth() {
 		console.log('initAuth');
@@ -448,12 +482,8 @@ app
 	}
 	
 	this.google = function () {
-		console.log('google_authentication');
-		gapi.load('client:auth2', initAuth);
-		console.log('gapi.loaded');
-		
-		//auth();
-		gapi.auth2.getAuthInstance().signIn().then(function() {
+		var instance = gapi.auth2.getAuthInstance();
+		instance.signIn().then(function() {
 			makeApiCall();
 		});
 	}
