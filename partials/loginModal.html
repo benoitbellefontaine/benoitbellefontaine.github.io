@@ -1,15 +1,65 @@
-view: loginModal.html
-<div class="modal-header">
-	<h3 class="modal-title" id="modal-title">Login Form</h3>
-</div>
-<div class="modal-body" id="modal-body">
-	<form ng-submit="$ctrl.submit(email, password)">
-		<input type="text" ng-model="email" />
-		<input type="password" ng-model="password" />
-		<button class="btn btn-primary" type="submit" >Login</button>
+
+	<!-- GOOGLE API AUTHORIZED ACCESS -->
+	<script>
+		var apiKey = 'AIzaSyCS6E__FsG206GJUh6wWgP6oz0QVCWBpCU';
+		var clientId = '898129103079-df2a6vsnvtfvsv3l41vdjkipvvd60aoo.apps.googleusercontent.com';
+		var scopes = 'profile';
+
+      // Get authorization from the user to access profile info
+      function initAuth() {
+		console.log('initAuth');
+        gapi.client.setApiKey(apiKey);
+        gapi.auth2.init({
+            client_id: clientId,
+            scope: scopes
+        });
+        var signinButton = document.getElementById('google-button');
+        signinButton.addEventListener("click", auth);
+      }
+
+      function auth() {
+        gapi.auth2.getAuthInstance().signIn().then(function() {
+          makeApiCall();
+        });
+      }
+
+      gapi.load('client:auth2', initAuth);
+    </script>
+
+	view: loginModal.html
+	<!-- <div class="modal-header">
+		<h3 class="modal-title" id="modal-title">theludo login</h3>
+	</div> -->
+	<div class="modal-body" id="modal-body">
+		<h3 class="modal-title" id="modal-title">theludo login</h3>
+		<form ng-submit="$ctrl.submit(email, password)">
+			<input type="text" ng-model="email" />
+			<input type="password" ng-model="password" />
+			<button class="btn btn-primary" type="submit" >Login</button>
+		</form>
+	</div>
+	<!-- <div class="modal-header">
+		<h3 class="modal-title" id="modal-title">Google Login</h3>
+	</div> -->
+	<hr>
+	<div class="modal-body" id="modal-body">
+		<h3 class="modal-title" id="modal-title">Google Login</h3>
+		API: {{apiKey}}<br>
+		Client ID = {{clientId}}<br>
+		<form ng-submit="$ctrl.google()">
+			<button class="btn btn-danger" type="submit">Login</button>
+		</form>
+	</div>
+	<hr>
+	<!-- <div class="modal-header">
+		<h3 class="modal-title" id="modal-title">Facebook Login</h3>
+	</div> -->
+	<div class="modal-body" id="modal-body">
+		<h3 class="modal-title" id="modal-title">Facebook Login</h3>
+		<form>
+			<button id="" class="btn btn-primary" type="submit" >Login</button>
+		</form>
+	</div>
+	<div class="modal-footer">
 		<button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>
-	</form>
-</div>
-<!-- <div class="modal-footer">
-	<button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>
-</div> -->
+	</div>
