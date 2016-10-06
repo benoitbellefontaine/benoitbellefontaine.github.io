@@ -16,30 +16,103 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js"></script>
     <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.1.4.js"></script>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	
 	<!-- <script src="js/angular.min.js"></script> -->
 	<script src="js/angular-route.js"></script>
 	<script src="js/angular-resource.min.js"></script>
 	<script src="js/angular-ui-router.min.js"></script>
 	
+	
+	<!-- BOOTSTRAP JS -->
+	<!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+	
 	<script src="app.js"></script>
 	
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	
+	<!-- GOOGLE API -->
+	<script src="https://apis.google.com/js/api.js"></script>
+	<script>
+		function appendResults(text) {
+			var results = document.getElementById('results');
+			results.appendChild(document.createElement('P'));
+			results.appendChild(document.createTextNode(text));
+		}
+
+		function makeRequest() {
+			var request = gapi.client.urlshortener.url.get({
+				'shortUrl': 'http://goo.gl/fbsS'
+			});
+			request.then(function(response) {
+				appendResults(response.result.longUrl);
+			}, function(reason) {
+			console.log('Error: ' + reason.result.error.message);
+			});
+		}
+
+		function init() {
+			gapi.client.setApiKey('YOUR API KEY');
+			gapi.client.load('urlshortener', 'v1').then(makeRequest);
+		}
+
+		gapi.load('client', init);
+	</script>
+	
+	<!-- GOOGLE API AUTHORIZED ACCESS -->
+    <script>
+      var apiKey = 'YOUR_API_KEY';
+      var clientId = 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com';
+      var scopes = 'profile';
+
+      // Get authorization from the user to access profile info
+      function initAuth() {
+        gapi.client.setApiKey(apiKey);
+        gapi.auth2.init({
+            client_id: clientId,
+            scope: scopes
+        });
+        var signinButton = document.getElementById('signin-button');
+        signinButton.addEventListener("click", auth);
+      }
+
+      function auth() {
+        gapi.auth2.getAuthInstance().signIn().then(function() {
+          makeApiCall();
+        });
+      }
+
+      gapi.load('client:auth2', initAuth);
+    </script>
+
 
 </head>
   
-<body ng-app="app">
+<body ng-app="app" ng-controller="ApplicationController">
   
-  	<nav class="nav"> <!-- header -->
-		3D LUDO LOGO / Header
-		<span class="right" ng-controller="MainController">
-			<!-- username:&nbsp<input type="text" name="firstname">&nbsp;&nbsp; -->
-			<!-- password:&nbsp<input type="text" name="lastname">&nbsp;&nbsp;  -->
-			<button class="btn btn-primary" type="submit" ui-sref="dashboard" ui-sref-active="active">Login</button>
-			<button class="btn btn-warning" type="submit" ng-click="register()">Sign Up</button>
+  	<div class="nav">
+		3D LUDO
+		<span class="right">
+			<!-- <h1 class="ng-cloak" ng-hide="auth.isLoggedIn()">  
+			  Hi stranger!
+			</h1>
+			<h1 class="ng-cloak" ng-show="auth.isLoggedIn()">
+				Hi {{ session.getFullName() }}
+			</h1>   -->
+			<div ng-if="currentUser">
+				<form ng-submit="logout()">
+					Welcome. Logged in as {{currentUser}} <button class="btn btn-warning" type="submit" id="submit">Logout</button>
+				</form>
+			</div>
+			<div ng-if="!currentUser">
+				<!-- <button class="btn btn-primary" type="submit" ui-sref="dashboard" ui-sref-active="active">Login</button> -->
+				<button class="btn btn-primary" type="submit" ng-click="login()">Login</button>
+				<button class="btn btn-warning" type="submit" ng-click="register()">Sign Up</button>
+			</div>
 		</span>
-	</nav>
+	</div>
 
 	<div ui-view="viewHome"></div>
 	<!-- <div ui-view="viewLogin"></div> -->
